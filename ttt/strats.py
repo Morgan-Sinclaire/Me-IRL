@@ -13,10 +13,15 @@ def random_play(arr):
     return tuple(random.choice(list(zip(*np.where(arr == 0)))))
 
 def place(rcd_ind, ind):
+    """
+    Given a number 0-7 indicating whether the coordinate is in a row,
+    column, or diagonal, and an index 0-2 on that 3_set, return the
+    coordinate represented.
+    """
     if rcd_ind in [0, 1, 2]:
         return rcd_ind,ind
     if rcd_ind in [3, 4, 5]:
-        return ind,rcd_ind
+        return ind,rcd_ind-3
     if rcd_ind == 6:
         return ind,ind
     if rcd_ind == 7:
