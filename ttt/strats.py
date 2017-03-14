@@ -1,5 +1,6 @@
 import numpy as np
 import random
+import ttt
 
 def human_play(arr):
     """Query the human for a coordinate to move, and return this tuple."""
@@ -22,11 +23,12 @@ def place(rcd_ind, ind):
         return 2-ind,ind
 
 def one_lookahead(arr, pos=1):
-    """If one already has 2 in a row, play winning move.
+    """
+    If one already has 2 in a row, play winning move.
     If opponent already has 2 in a row, play blocking move.
     Otherwise, play randomly. Play depends on which player is positive.
     """
-    rcd = row_col_diag(arr)
+    rcd = ttt.row_col_diag(arr)
     for i in range(len(rcd)):
         if (rcd[i] == pos).sum() == 2 and not (rcd[i] == -pos).sum():
             return place(i, np.where(rcd[i] == 0)[0][0])
