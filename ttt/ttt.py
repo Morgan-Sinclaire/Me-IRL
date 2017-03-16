@@ -25,13 +25,21 @@ class Board(object):
     def __init__(self):
         self.arr = np.zeros((3,3), dtype=int)
 
-    def check(self):
+    def win(self):
         """Return 1 or -1 if a player has won, 0 otherwise."""
         rcd_sums = [np.sum(x) for x in row_col_diag(self.arr)]
         for s in rcd_sums:
             if s in [-3,3]:
-                return s
+                return s // 3
         return 0
+
+    def draw(self):
+        """Return whether or not the game is drawn."""
+        return int((np.count_nonzero(self.arr) == 9) and (not self.win()))
+
+    def term(self):
+        """Return whether or not the game is in a terminal state."""
+        return self.win() or self.draw()
 
     def move(self, coord, mark):
         """
@@ -52,3 +60,14 @@ class Board(object):
         print("--+---+--")
         print("{} | {} | {}".format(*m[6:]))
         print()
+
+    def print_result(w):
+        w = self.win()
+        if w == 1:
+            print("X wins!")
+        elif w == -1:
+            print("O wins!")
+        elif self.draw():
+            print("Draw!")
+        else:
+            print("Game is still in progress!")

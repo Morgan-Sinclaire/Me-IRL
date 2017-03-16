@@ -9,9 +9,10 @@ def initialize():
     p2 = input('h for human, r for random AI, 1 for 1-move lookahead:')
     return ttt.Board(),p1,p2
 
-def ply(b, player, turn_num, p_num):
+def ply(b, player, turn_num, p_num, verbose):
     """Play out one turn, showing the board and taking input from the player."""
-    b.show()
+    if verbose:
+        b.show()
     if player == "h":
         coord = strats.human_play(b.arr)
     elif player == "r":
@@ -21,31 +22,29 @@ def ply(b, player, turn_num, p_num):
 
     b.move(coord, p_num)
 
-def print_result(w):
-    if w == 3:
-        print("X wins!")
-    elif w == -3:
-        print("O wins!")
-    else:
-        print("Draw!")
-
-def game():
+def game(players=False):
     """Play a game of tic-tac-toe."""
-    b,p1,p2 = initialize()
+    if players:
+        verbose=False
+        b = ttt.Board()
+        p1,p2 = players
+    else:
+        verbose=True
+        b,p1,p2 = initialize()
 
     turn_num = 1
-    while turn_num <= 9:
+    while not b.term:
         if turn_num % 2:
-            ply(b, p1, turn_num, 1)
+            ply(b, p1, turn_num, 1, verbose)
         else:
-            ply(b, p2, turn_num, -1)
-
-        w = b.check()
-        if w:
-            break
+            ply(b, p2, turn_num, -1, verbose)
 
         turn_num += 1
 
-    print_result(w)
+    if verbose:
+        b.print_result()
+    else:
+        return b.win()
 
-game()
+if __name__ == '__main__':
+    game()
