@@ -19,21 +19,21 @@ def ply(b, player, turn_num, p_num, verbose):
         coord = strats.random_play(b.arr)
     elif player == "1":
         coord = strats.one_lookahead(b.arr, p_num)
+    elif player == "m":
+        coord = strats.minimax(b.arr, p_num)
 
     b.move(coord, p_num)
 
-def game(players=False):
+def game(verbose=False, players=False):
     """Play a game of tic-tac-toe."""
     if players:
-        verbose=False
         b = ttt.Board()
         p1,p2 = players
     else:
-        verbose=True
         b,p1,p2 = initialize()
 
     turn_num = 1
-    while not b.term:
+    while not b.term():
         if turn_num % 2:
             ply(b, p1, turn_num, 1, verbose)
         else:
@@ -47,4 +47,4 @@ def game(players=False):
         return b.win()
 
 if __name__ == '__main__':
-    game()
+    print(game(verbose=False, players=('1', 'm')))

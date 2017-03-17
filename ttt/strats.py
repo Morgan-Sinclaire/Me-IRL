@@ -54,7 +54,7 @@ def negamax(arr, p=-1):
     Given a game board and a player in {1,-1}, return 1,0,-1, depending
     whether they're in a winning, drawing, or losing position under minimax.
     """
-    b = Board()
+    b = ttt.Board()
     b.arr = arr
     if b.term():
         return b.win()*p,()

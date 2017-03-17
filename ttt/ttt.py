@@ -63,7 +63,7 @@ class Board(object):
         print("{} | {} | {}".format(*m[6:]))
         print()
 
-    def print_result(w):
+    def print_result(self):
         w = self.win()
         if w == 1:
             print("X wins!")
