@@ -41,10 +41,10 @@ def one_lookahead(arr, p=-1):
     Otherwise, play randomly. Play depends on which player is positive.
     """
     rcd = ttt.row_col_diag(arr)
-    for i in range(len(rcd)):
+    for i in range(rcd.shape[0]):
         if (rcd[i] == p).sum() == 2 and not (rcd[i] == -p).sum():
             return place(i, np.where(rcd[i] == 0)[0][0])
-    for i in range(len(rcd)):
+    for i in range(rcd.shape[0]):
         if (rcd[i] == -p).sum() == 2 and not (rcd[i] == p).sum():
             return place(i, np.where(rcd[i] == 0)[0][0])
     return random_play(arr)

@@ -5,10 +5,13 @@ def row_col_diag(arr):
     Return 8x3 list giving the rows, columns, diagonal, and
     antidiagonal of a 3x3 matrix.
     """
-    three_sets = [arr[i] for i in range(arr.shape[0])]
-    three_sets += [arr[:,i] for i in range(arr.shape[1])]
-    three_sets.append(np.diag(arr))
-    three_sets.append(np.diag(np.flipud(arr)))
+    three_sets = np.zeros((8,3), dtype=int)
+    for i in range(arr.shape[0]):
+        three_sets[i] = arr[i]
+    for i in range(arr.shape[1]):
+        three_sets[i+3] = arr[:,i]
+    three_sets[6] = np.diag(arr)
+    three_sets[7] = np.diag(np.flipud(arr))
     return three_sets
 
 def xo_convert(n):
@@ -27,8 +30,7 @@ class Board(object):
 
     def win(self):
         """Return 1 or -1 if a player has won, 0 otherwise."""
-        rcd_sums = [np.sum(x) for x in row_col_diag(self.arr)]
-        for s in rcd_sums:
+        for s in np.sum(row_col_diag(self.arr), axis=1):
             if s in [-3,3]:
                 return s // 3
         return 0
