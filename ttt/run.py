@@ -11,18 +11,21 @@ def initialize():
 
 def ply(b, player, turn_num, p_num, verbose):
     """Play out one turn, showing the board and taking input from the player."""
-    if verbose:
-        b.show()
     if player == "h":
         coord = strats.human_play(b.arr)
     elif player == "r":
         coord = strats.random_play(b.arr)
+    elif player == "f":
+        coord = strats.first(b.arr)
     elif player == "1":
         coord = strats.one_lookahead(b.arr, p_num)
     elif player == "m":
         coord = strats.minimax(b.arr, p_num)
-
+    elif player == "p":
+        coord = strats.minimax_pruned(b.arr, p_num)
     b.move(coord, p_num)
+    if verbose:
+        b.show()
 
 def game(verbose=False, players=False):
     """Play a game of tic-tac-toe."""
@@ -32,6 +35,8 @@ def game(verbose=False, players=False):
     else:
         b,p1,p2 = initialize()
 
+    if verbose:
+        b.show()
     turn_num = 1
     while not b.term():
         if turn_num % 2:
@@ -47,4 +52,4 @@ def game(verbose=False, players=False):
         return b.win()
 
 if __name__ == '__main__':
-    print(game(verbose=False, players=('1', 'm')))
+    game(verbose=True, players=('p', 'h'))

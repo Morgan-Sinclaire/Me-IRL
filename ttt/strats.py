@@ -67,7 +67,6 @@ def minimax(arr, p, depth=0, max_depth=9):
     b.arr = arr
     if b.term():
         return b.win()
-        # when p=-1, we want to indicate a win as 1
 
     if p == 1:
         m = -2
@@ -99,19 +98,18 @@ def minimax(arr, p, depth=0, max_depth=9):
         else:
             return m
 
-def minimax_pruned(arr, p, depth=0, max_depth=9, alpha=-2, beta=2):
+def minimax_pruned(arr, p, depth=0, max_depth=9, alpha=-1, beta=1):
     """Same as minimax, but apply alpha-beta pruning for efficiency."""
     b = ttt.Board()
     b.arr = arr
     if b.term():
         return b.win()
-        # when p=-1, we want to indicate a win as 1
 
     if p == 1:
         m = -2
         for i,j in open_spots(arr):
             b.arr[i,j] = p
-            v = minimax_pruned(arr, -1, depth+1, max_depth, alpha, beta)
+            v = minimax_pruned(arr, -p, depth+1, max_depth, alpha, beta)
             b.arr[i,j] = 0
             if v > m:
                 m = v
@@ -131,7 +129,7 @@ def minimax_pruned(arr, p, depth=0, max_depth=9, alpha=-2, beta=2):
         m = 2
         for i,j in open_spots(arr):
             b.arr[i,j] = p
-            v = minimax_pruned(arr, 1, depth+1, max_depth, alpha, beta)
+            v = minimax_pruned(arr, -p, depth+1, max_depth, alpha, beta)
             b.arr[i,j] = 0
             if v < m:
                 m = v

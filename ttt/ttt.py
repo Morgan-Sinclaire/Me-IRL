@@ -48,10 +48,7 @@ class Board(object):
         Given a coordinate and member of {'X', 'O'}, change the board
         to reflect that move.
         """
-        if self.arr[coord]:
-            print("That spot's taken!")
-        else:
-            self.arr[coord] = mark
+        self.arr[coord] = mark
 
     def show(self):
         """Print the current board with X's and O's."""
