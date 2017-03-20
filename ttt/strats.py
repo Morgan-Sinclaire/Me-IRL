@@ -2,15 +2,22 @@ import numpy as np
 import random
 import ttt
 
+def open_spots(arr):
+    """Return list of coordinates of empty spots on the board."""
+    return np.column_stack(np.where(arr == 0))
+
 def human_play(arr):
     """Query the human for a coordinate to move, and return this tuple."""
     coord = input("Where do you want to move: ").replace(",", " ").split()
     coord = tuple(map(int, coord))
+    if arr[coord] != 0:
+        print("That spot's taken!")
+        return human_play(arr)
     return coord
 
 def random_play(arr):
     """Randomly pick an empty spot on the board."""
-    return tuple(random.choice(list(zip(*np.where(arr == 0)))))
+    return tuple(random.choice(open_spots(arr)))
 
 def first(arr):
     """Pick the first empty spot, from top-left to bottom-right."""
@@ -49,32 +56,135 @@ def one_lookahead(arr, p=-1):
             return place(i, np.where(rcd[i] == 0)[0][0])
     return random_play(arr)
 
-def negamax(arr, p=-1):
+# def negamax(arr, p, depth=0, max_depth=9):
+#     """
+#     Given a game board and a player in {1,-1}, return 1,0,-1, depending
+#     on whether player 1 is in a winning, drawing, or losing position
+#     with the given player to move.
+#     Also return a tuple indicating a move that yields the best possible
+#     position.
+#     """
+#     b = ttt.Board()
+#     b.arr = arr
+#     if b.term():
+#         return b.win()
+#         # when p=-1, we want to indicate a win as 1
+#
+#     m = -2
+#
+#     for i in range(arr.shape[0]):
+#         for j in range(arr.shape[1]):
+#             if b.arr[i,j] == 0:
+#                 b.arr[i,j] = p
+#                 v = -negamax(arr, -p, depth+1, max_depth)
+#                 if v > m:
+#                     m = v
+#                     mi = i
+#                     mj = j
+#                 b.arr[i,j] = 0
+#
+#     if depth == 0:
+#         return m*p,(mi,mj)
+#     else:
+#         return m
+
+
+def minimax(arr, p, depth=0, max_depth=9):
     """
     Given a game board and a player in {1,-1}, return 1,0,-1, depending
-    whether they're in a winning, drawing, or losing position under minimax.
+    on whether player 1 is in a winning, drawing, or losing position
+    with the given player to move.
+    Also return a tuple indicating a move that yields the best possible
+    position.
     """
     b = ttt.Board()
     b.arr = arr
     if b.term():
-        return b.win()*p,()
+        return b.win()
         # when p=-1, we want to indicate a win as 1
 
-    m = -2
+    if p == 1:
+        m = -2
+        for i,j in open_spots(arr):
+            b.arr[i,j] = p
+            v = minimax(arr, -1, depth+1, max_depth)
+            if v > m:
+                m = v
+                mi = i
+                mj = j
+            b.arr[i,j] = 0
+        if depth == 0:
+            return mi,mj
+        else:
+            return m
 
-    for i in range(arr.shape[0]):
-        for j in range(arr.shape[1]):
-            if b.arr[i,j] == 0:
-                b.arr[i,j] = p
-                v,ind = negamax(arr, -p)
-                v = -v
-                if v > m:
-                    m = v
-                    mi = i
-                    mj = j
-                b.arr[i,j] = 0
+    if p == -1:
+        m = 2
+        for i,j in open_spots(arr):
+            b.arr[i,j] = p
+            v = minimax(arr, 1, depth+1, max_depth)
+            if v < m:
+                m = v
+                mi = i
+                mj = j
+            b.arr[i,j] = 0
+        if depth == 0:
+            return mi,mj
+        else:
+            return m
 
-    return m,(mi,mj)
 
-def minimax(arr, p=-1):
-    return negamax(arr, p)[1]
+
+def minimax_pruned(arr, p, depth=0, max_depth=9, alpha=-2, beta=2):
+    """
+    Given a game board and a player in {1,-1}, return 1,0,-1, depending
+    on whether player 1 is in a winning, drawing, or losing position
+    with the given player to move.
+    Also return a tuple indicating a move that yields the best possible
+    position.
+    """
+    b = ttt.Board()
+    b.arr = arr
+    if b.term():
+        return b.win()
+        # when p=-1, we want to indicate a win as 1
+
+    if p == 1:
+        m = -2
+        for i,j in open_spots(arr):
+            b.arr[i,j] = p
+            v = minimax_pruned(arr, -1, depth+1, max_depth, alpha, beta)
+            b.arr[i,j] = 0
+            if v > m:
+                m = v
+                mi = i
+                mj = j
+            if v > alpha:
+                alpha = v
+            if beta <= alpha:
+                break
+
+        if depth == 0:
+            return mi,mj
+        else:
+            return m
+
+    if p == -1:
+        m = 2
+        for i,j in open_spots(arr):
+            b.arr[i,j] = p
+            v = minimax_pruned(arr, 1, depth+1, max_depth, alpha, beta)
+            b.arr[i,j] = 0
+            if v < m:
+                m = v
+                mi = i
+                mj = j
+            if v < beta:
+                beta = v
+            if beta <= alpha:
+                break
+
+        if depth == 0:
+            return mi,mj
+        else:
+            return m
