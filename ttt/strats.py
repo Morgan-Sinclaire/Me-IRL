@@ -63,21 +63,19 @@ def minimax(arr, p, depth=0, max_depth=9):
     For non-root calls, return 1,0,-1, depending on whether p1 is in a
     winning, drawing, or losing position with the given player to move.
     """
-    b = ttt.Board()
-    b.arr = arr
-    if b.term():
-        return b.win()
+    if ttt.term(arr):
+        return ttt.win(arr)
 
     if p == 1:
         m = -2
         for i,j in open_spots(arr):
-            b.arr[i,j] = p
+            arr[i,j] = p
             v = minimax(arr, -1, depth+1, max_depth)
+            arr[i,j] = 0
             if v > m:
                 m = v
                 mi = i
                 mj = j
-            b.arr[i,j] = 0
         if depth == 0:
             return mi,mj
         else:
@@ -86,13 +84,13 @@ def minimax(arr, p, depth=0, max_depth=9):
     if p == -1:
         m = 2
         for i,j in open_spots(arr):
-            b.arr[i,j] = p
+            arr[i,j] = p
             v = minimax(arr, 1, depth+1, max_depth)
+            arr[i,j] = 0
             if v < m:
                 m = v
                 mi = i
                 mj = j
-            b.arr[i,j] = 0
         if depth == 0:
             return mi,mj
         else:
@@ -100,17 +98,15 @@ def minimax(arr, p, depth=0, max_depth=9):
 
 def minimax_pruned(arr, p, depth=0, max_depth=9, alpha=-1, beta=1):
     """Same as minimax, but apply alpha-beta pruning for efficiency."""
-    b = ttt.Board()
-    b.arr = arr
-    if b.term():
-        return b.win()
+    if ttt.term(arr):
+        return ttt.win(arr)
 
     if p == 1:
         m = -2
         for i,j in open_spots(arr):
-            b.arr[i,j] = p
+            arr[i,j] = p
             v = minimax_pruned(arr, -p, depth+1, max_depth, alpha, beta)
-            b.arr[i,j] = 0
+            arr[i,j] = 0
             if v > m:
                 m = v
                 mi = i
@@ -128,9 +124,9 @@ def minimax_pruned(arr, p, depth=0, max_depth=9, alpha=-1, beta=1):
     if p == -1:
         m = 2
         for i,j in open_spots(arr):
-            b.arr[i,j] = p
+            arr[i,j] = p
             v = minimax_pruned(arr, -p, depth+1, max_depth, alpha, beta)
-            b.arr[i,j] = 0
+            arr[i,j] = 0
             if v < m:
                 m = v
                 mi = i

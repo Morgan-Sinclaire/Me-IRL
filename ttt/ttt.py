@@ -23,25 +23,26 @@ def xo_convert(n):
     else:
         return " "
 
+def win(arr):
+    """Return 1 or -1 if a player has won, 0 otherwise."""
+    for s in np.sum(row_col_diag(arr), axis=1):
+        if s in [-3,3]:
+            return s // 3
+    return 0
+
+def draw(arr):
+    """Return whether or not the game is drawn."""
+    return int((np.count_nonzero(arr) == 9) and (not win(arr)))
+
+def term(arr):
+    """Return whether or not the game is in a terminal state."""
+    return win(arr) or draw(arr)
+
+
 class Board(object):
     """Board object taking a 3x3 np.array as an attribute."""
     def __init__(self):
         self.arr = np.zeros((3,3), dtype=int)
-
-    def win(self):
-        """Return 1 or -1 if a player has won, 0 otherwise."""
-        for s in np.sum(row_col_diag(self.arr), axis=1):
-            if s in [-3,3]:
-                return s // 3
-        return 0
-
-    def draw(self):
-        """Return whether or not the game is drawn."""
-        return int((np.count_nonzero(self.arr) == 9) and (not self.win()))
-
-    def term(self):
-        """Return whether or not the game is in a terminal state."""
-        return self.win() or self.draw()
 
     def move(self, coord, mark):
         """
@@ -49,6 +50,15 @@ class Board(object):
         to reflect that move.
         """
         self.arr[coord] = mark
+
+    def win(self):
+        return win(self.arr)
+
+    def draw(self):
+        return draw(self.arr)
+
+    def term(self):
+        return term(self.arr)
 
     def show(self):
         """Print the current board with X's and O's."""
