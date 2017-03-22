@@ -19,12 +19,20 @@ def random_play(arr):
     """Randomly pick an empty spot on the board."""
     return tuple(random.choice(open_spots(arr)))
 
-def first(arr):
+def first_play(arr):
     """Pick the first empty spot, from top-left to bottom-right."""
     for i in range(arr.shape[0]):
         for j in range(arr.shape[1]):
             if arr[i,j] == 0:
                 return i,j
+
+def center_corner_play(arr):
+    """Take the center, else take a corner."""
+    o_spots = {tuple(x) for x in open_spots(arr)}
+    for spot in [(1,1), (0,0), (0,2), (2,0), (2,2)]:
+        if spot in o_spots:
+            return spot
+    return first_play(arr)
 
 def place(rcd_ind, ind):
     """
